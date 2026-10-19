@@ -18,7 +18,12 @@ public class ShooterTest extends LinearOpMode {
         while (opModeIsActive()){
             // target RPM * ticks per revolution / 60 (ticks per minute / 60 = ticks per second)
             int speed = 3000*28/60;
-            shoot.setVelocity(speed);
+            if (gamepad1.right_stick_y > 0)
+                shoot.setVelocity(gamepad1.right_stick_y*speed);
+            else if (gamepad1.a)
+                shoot.setVelocity(speed);
+            else if (gamepad1.b)
+                shoot.setVelocity(2*speed);
             telemetry.addLine(String.valueOf(shoot.getPower()));
             telemetry.update();
         }
