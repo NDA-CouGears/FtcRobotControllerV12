@@ -40,16 +40,15 @@ public class ShooterTest extends LinearOpMode {
 
             telemetry.addLine(String.valueOf(shoot.getPower()));
 
-            // target RPM * ticks per revolution / 60 (ticks per minute / 60 = ticks per second)
-            int intakeSpeed = 1620*28/60;
+            // gear ratio / 60 (ticks per minute / 60 = ticks per second)
+            int intakeSpeed = 6000*28/60;
 
             // If the left joystick is pressed more than a little use it for intake speed
             if (Math.abs(gamepad1.left_stick_y) > 0.1)
-                intake.setVelocity(gamepad1.right_stick_y*intakeSpeed);
+                intake.setVelocity(gamepad1.left_stick_y*intakeSpeed);
             else
-                shoot.setVelocity(0);
+                intake.setVelocity(0);
 
-            telemetry.addLine(String.valueOf(shoot.getPower()));
             telemetry.addLine(String.valueOf(intake.getPower()));
 
             telemetry.update();

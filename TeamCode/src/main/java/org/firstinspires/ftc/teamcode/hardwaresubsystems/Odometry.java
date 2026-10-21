@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardwaresubsystems;
 
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
@@ -43,6 +45,19 @@ public class Odometry extends HardwareSubsystem {
 
     public Pose2D getOdoReading() {
         return odo.getPosition();
+    }
+
+    protected Pose2D getFieldPosition() {
+        // TO-DO: update the math in this based on new pinpoint odo
+        Pose2D pos = getOdoReading();
+        double heading = pos.getHeading(AngleUnit.DEGREES) + 90;
+        double x = -pos.getY(DistanceUnit.INCH);
+        double y = pos.getX(DistanceUnit.INCH);
+        return new Pose2D(DistanceUnit.INCH, x, y, AngleUnit.DEGREES, heading);
+    }
+
+    public void setStartPos(double x, double y, double heading) {
+        odo.setPosition(new Pose2D(DistanceUnit.INCH,x,y,AngleUnit.DEGREES,heading));
     }
 
     @Override
