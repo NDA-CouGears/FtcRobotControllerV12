@@ -1,6 +1,18 @@
-public class Config extends HardwareSubsystem{
+package org.firstinspires.ftc.teamcode.hardwaresubsystems;
+
+import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+
+public class Config extends HardwareSubsystem {
     private static final File CONFIG_FILE = AppUtil.getInstance().getSettingsFile("robot_config.json");
-    public blueAlliance = true;
+    public boolean blueAlliance = true;
 
     public void save() {
         try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
@@ -31,7 +43,7 @@ public class Config extends HardwareSubsystem{
 
     int curMenu = 0;
 
-    boolean dPadPressed = false;
+    boolean dpadPressed = false;
 
     public void displayMenu(Telemetry telemetry, Gamepad gamepad) {
         boolean changed = false;
@@ -88,7 +100,15 @@ public class Config extends HardwareSubsystem{
         if (changed) {
             save();
         }
+    }
 
-
+    @Override
+    public void loop() {
 
     }
+
+    @Override
+    public void end() {
+
+    }
+}
