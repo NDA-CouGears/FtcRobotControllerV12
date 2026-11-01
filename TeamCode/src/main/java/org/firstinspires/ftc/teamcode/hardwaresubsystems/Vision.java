@@ -10,6 +10,7 @@ public class Vision extends HardwareSubsystem{
     public void init(RobotParent robotParent) {
         super.init(robotParent);
         tagCam = robot.hardwareMap.get(VisionPortal.class, "tag cam");
+        // add the apriltag processor
     }
 
     @Override

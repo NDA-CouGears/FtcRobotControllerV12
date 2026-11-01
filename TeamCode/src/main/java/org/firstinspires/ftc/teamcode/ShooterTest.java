@@ -12,13 +12,14 @@ import com.qualcomm.robotcore.util.Range;
 public class ShooterTest extends LinearOpMode {
     DcMotorEx shoot;
     DcMotorEx intake;
+    float speed;
 
     @Override
     public void runOpMode() {
         waitForStart();
         shoot = hardwareMap.get(DcMotorEx.class, "shoot");
         shoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shoot.setDirection(DcMotorSimple.Direction.REVERSE);
+        shoot.setDirection(DcMotorSimple.Direction.FORWARD);
 
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -28,15 +29,26 @@ public class ShooterTest extends LinearOpMode {
             // target RPM * ticks per revolution / 60 (ticks per minute / 60 = ticks per second)
             int shootSpeed = 6000*28/60;
 
+            if (gamepad1.a) {
+                speed = gamepad1.right_stick_y * shootSpeed;
+                shoot.setVelocity(speed);
+            }
             // If the right joystick is pressed more than a little use it for shoot speed
-            if (Math.abs(gamepad1.right_stick_y) > 0.1)
-                shoot.setVelocity(gamepad1.right_stick_y*shootSpeed);
-            else if (gamepad1.a)
-                shoot.setVelocity(shootSpeed*.5);
-            else if (gamepad1.b)
-                shoot.setVelocity(shootSpeed);
-            else if (gamepad1.x)
-                shoot.setVelocity(0);
+            else if (gamepad1.right_stick_y < -0.1 && speed == 0) {
+                shoot.setVelocity(gamepad1.right_stick_y * shootSpeed);
+                telemetry.addLine(String.valueOf(gamepad1.right_stick_y * shootSpeed));
+            }
+            else if (gamepad1.x) {
+                speed = 0;
+                shoot.setVelocity(speed);
+            }
+            else if (gamepad1.y) {
+                speed = -1250;
+                shoot.setVelocity(speed);
+            }
+            else {
+                telemetry.addLine(String.valueOf(speed));
+            }
 
             telemetry.addLine(String.valueOf(shoot.getPower()));
 
