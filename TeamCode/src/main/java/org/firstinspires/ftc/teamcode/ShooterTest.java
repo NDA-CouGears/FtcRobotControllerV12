@@ -21,7 +21,7 @@ public class ShooterTest extends LinearOpMode {
         shoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shoot.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        intake = hardwareMap.get(DcMotorEx.class, "intake");
+        intake = hardwareMap.get(DcMotorEx.class, "intake spinny");
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
 

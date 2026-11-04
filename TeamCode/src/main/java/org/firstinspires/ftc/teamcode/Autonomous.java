@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Auto")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "auto")
 public class Autonomous extends RobotParent{
 
     @Override
@@ -20,5 +20,10 @@ public class Autonomous extends RobotParent{
     @Override
     public void loop() {
         super.loop();
+    }
+
+    @Override
+    public void end() {
+        super.end();
     }
 }

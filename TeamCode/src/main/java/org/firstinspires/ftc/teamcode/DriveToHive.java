@@ -23,7 +23,7 @@ public class DriveToHive implements Command {
 
     @Override
     public Set<Object> requirements() {
-        return Set.of(robot.drive);
+        return Collections.singleton(robot.drive);
     }
 
     @Override
@@ -55,16 +55,15 @@ public class DriveToHive implements Command {
 
     @Override
     public boolean done() {
-        return false;
+        // it's done if drive isn't busy (sri's second comment of the season)
+        return !robot.drive.isBusy();
     }
 
     @Override
     public void execute() {
-
     }
 
     @Override
     public void end(EndCondition endCondition) {
-
     }
 }

@@ -28,6 +28,10 @@ public class DriveTrain extends HardwareSubsystem {
         follower.update();
     }
 
+    public boolean isBusy() {
+        return follower.isBusy();
+    }
+
     public void driveToPath(Path path) {
         follower.follow(path);
     }
