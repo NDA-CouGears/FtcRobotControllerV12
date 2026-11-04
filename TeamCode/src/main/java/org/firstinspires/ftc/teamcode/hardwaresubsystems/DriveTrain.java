@@ -18,7 +18,6 @@ public class DriveTrain extends HardwareSubsystem {
     public void init(RobotParent robotParent) {
         super.init(robotParent);
 
-        Scheduler.reset();
         follower = PedroConstants.create(robot.hardwareMap);
         factory = PoseFactory.degrees();
     }
@@ -54,7 +53,6 @@ public class DriveTrain extends HardwareSubsystem {
     @Override
     public void loop() {
         follower.update();
-        Scheduler.execute();
     }
 
     @Override

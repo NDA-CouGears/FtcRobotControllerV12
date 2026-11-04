@@ -36,7 +36,8 @@ public abstract class RobotParent extends OpMode {
         Scheduler.execute();
     }
 
-    public void end() {
+    @Override
+    public void stop() {
         drive.end();
         config.end();
         intake.end();

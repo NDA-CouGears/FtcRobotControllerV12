@@ -21,7 +21,7 @@ public class Intake extends HardwareSubsystem {
     }
 
     public void setIntakeSpeed(double speed) {
-        speed = Range.clip(speed,0,1);
+        speed = Range.clip(speed,-1,1);
         intakeSpinny.setVelocity(speed * INTAKE_SPEED);
     }
 
