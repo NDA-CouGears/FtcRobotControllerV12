@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+import com.pedropathing.ivy.Scheduler;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.hardwaresubsystems.Config;
@@ -22,6 +23,7 @@ public abstract class RobotParent extends OpMode {
         intake.init(this);
         shoot.init(this);
         vision.init(this);
+        Scheduler.reset();
     }
 
     @Override
@@ -31,5 +33,15 @@ public abstract class RobotParent extends OpMode {
         intake.loop();
         shoot.loop();
         vision.loop();
+        Scheduler.execute();
+    }
+
+    @Override
+    public void stop() {
+        drive.end();
+        config.end();
+        intake.end();
+        shoot.end();
+        vision.end();
     }
 }

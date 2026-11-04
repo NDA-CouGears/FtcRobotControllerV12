@@ -17,12 +17,12 @@ public class Intake extends HardwareSubsystem {
     @Override
     public void init(RobotParent robotParent) {
         super.init(robotParent);
-        intakeSpinny = hardwareMap.get(DcMotorEx.class, "intake spinny");
+        intakeSpinny = robot.hardwareMap.get(DcMotorEx.class, "intake spinny");
     }
 
     public void setIntakeSpeed(double speed) {
-        speed = Range.clip(speed,0,1);
-        intakeSpinny.setVelocity(speed);
+        speed = Range.clip(speed,-1,1);
+        intakeSpinny.setVelocity(speed * INTAKE_SPEED);
     }
 
     public double getIntakeSpeed() {

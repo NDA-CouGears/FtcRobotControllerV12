@@ -23,7 +23,7 @@ public class DriveToHive implements Command {
 
     @Override
     public Set<Object> requirements() {
-        return Set.of(robot.drive);
+        return Collections.singleton(robot.drive);
     }
 
     @Override
@@ -49,22 +49,25 @@ public class DriveToHive implements Command {
     @Override
     public void start() {
         robot.drive.setPos(new Pose(0,0,0));
-        Path path = Paths.line(robot.drive.getCurrentPos(), robot.drive.createPose(24,24,90));
+
+        Pose start = robot.drive.getCurrentPos();
+        Pose end   = robot.drive.createPose(24, 24, 90);
+        Path path  = Paths.line(start, end).linear(start, end);
+        
         robot.drive.driveToPath(path);
     }
 
     @Override
     public boolean done() {
-        return false;
+        // it's done if drive isn't busy (sri's second comment of the season)
+        return !robot.drive.isBusy();
     }
 
     @Override
     public void execute() {
-
     }
 
     @Override
     public void end(EndCondition endCondition) {
-
     }
 }
