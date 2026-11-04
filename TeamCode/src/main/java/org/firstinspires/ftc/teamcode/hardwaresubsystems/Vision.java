@@ -20,7 +20,7 @@ public class Vision extends HardwareSubsystem{
     public void init(RobotParent robotParent) {
         super.init(robotParent);
 
-        // to-do: add ball cam to the config
+        // to-do: add ball cam to the config and uncomment this + the line in end()
         /*
         ballPortal = new VisionPortal.Builder()
                 .setCamera(robot.hardwareMap.get(WebcamName.class, "ball cam"))
@@ -44,6 +44,7 @@ public class Vision extends HardwareSubsystem{
 
     @Override
     public void end() {
-
+        // ballPortal.close();
+        tagPortal.close();
     }
 }

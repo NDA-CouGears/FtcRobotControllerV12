@@ -23,7 +23,7 @@ public class Autonomous extends RobotParent{
     }
 
     @Override
-    public void end() {
-        super.end();
+    public void stop() {
+        super.stop();
     }
 }

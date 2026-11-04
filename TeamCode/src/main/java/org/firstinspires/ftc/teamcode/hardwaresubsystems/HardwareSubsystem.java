@@ -13,20 +13,4 @@ public abstract class HardwareSubsystem {
     public abstract void loop();
 
     public abstract void end();
-
-    public void lock(String lockerID) {
-        if (owner != null) throw new RuntimeException(lockerID+" tried to lock; already locked by "+owner);
-        owner = lockerID;
-    }
-
-    public void unlock(String lockerID) {
-        if (owner == null) throw new RuntimeException("not locked yet");
-
-        if (lockerID.equals(owner)) {
-            owner = null;
-        }
-        else {
-            throw new RuntimeException(lockerID+" tried to unlock, system owned by "+owner);
-        }
-    }
 }

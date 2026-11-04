@@ -5,16 +5,16 @@ public class TeleOp extends RobotParent{
 
     @Override
     public void init() {
-
+        super.init();
     }
 
     @Override
     public void loop() {
-
+        super.loop();
     }
 
     @Override
-    public void end() {
-        super.end();
+    public void stop() {
+        super.stop();
     }
 }
