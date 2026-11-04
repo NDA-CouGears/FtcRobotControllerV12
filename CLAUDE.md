@@ -22,10 +22,10 @@ Toolchain constraints:
 
 ## Architecture (short version; see ARCHITECTURE.md)
 
-- `RobotParent extends OpMode` owns one instance of each subsystem and forwards `init()` and `loop()` to them. Every competition OpMode should extend `RobotParent` and **call `super.init()`, `super.loop()`, and so on**.
+- `RobotParent extends OpMode` owns one instance of each subsystem and forwards `init()` and `loop()` to them. Every competition OpMode should extend `RobotParent` and **call `super.init()`, `super.loop()`, and `super.stop()`**. Cleanup belongs in the SDK's `stop()` lifecycle method. A method named `end()` on an OpMode is never called by the SDK.
 - `hardwaresubsystems/HardwareSubsystem` is the base class: `init(RobotParent)`, `loop()`, and `end()`. Get hardware through `robot.hardwareMap`, **never** through the static `BlocksOpModeCompanion.hardwareMap`.
 - Path following uses **Pedro Pathing v2** (`com.pedropathing:*`). Tuned constants are in `PedroConstants.java`. Treat those numbers as tuning data: don't change them unless asked.
-- Commands use **Ivy** (`com.pedropathing.ivy`). Commands implement `Command` and declare `requirements()` as the subsystem objects they use. `DriveTrain.loop()` calls `Scheduler.execute()`, and `DriveTrain.init()` calls `Scheduler.reset()`.
+- Commands use **Ivy** (`com.pedropathing.ivy`). Commands implement `Command` and declare `requirements()` as the subsystem objects they use. `RobotParent` owns the scheduler: it calls `Scheduler.reset()` at the end of `init()` and `Scheduler.execute()` at the end of `loop()`. Don't call these from subsystems.
 - Units: inches and degrees, through `DriveTrain.createPose(x, y, headingDeg)`. Use this instead of building `Pose` objects by hand, because the factory handles the alliance mirror.
 
 ## Hardware configuration names
@@ -37,9 +37,9 @@ These strings must match the robot configuration on the Driver Station:
 | `lf_drive`, `rf_drive`, `lb_drive`, `rb_drive` | drive motors | PedroConstants |
 | `odo` | goBILDA Pinpoint | PedroConstants |
 | `shoot` | shooter motor (DcMotorEx) | Shoot, ShooterTest |
-| `intake spinny` | intake motor | Intake |
-| `intake` | intake motor (test OpMode) | ShooterTest |
-| `tag cam` | webcam | Vision |
+| `intake spinny` | intake motor | Intake, ShooterTest |
+| `tag cam` | AprilTag webcam | Vision |
+| `ball cam` | second webcam (planned, not in config yet) | Vision (commented out) |
 
 If you add or rename a device, update this table.
 

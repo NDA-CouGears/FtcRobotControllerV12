@@ -1,6 +1,6 @@
 # Architecture
 
-Snapshot as of 2026-11-03 (commit `9cd64b5`). The codebase is early in the season: the structure is in place, but most subsystems are still stubs.
+Snapshot as of 2026-11-04 (commit `9893242`). The codebase is early in the season: the structure is in place, but most subsystems are still stubs.
 
 ## Repository layout
 
@@ -12,8 +12,8 @@ FtcRobotControllerV12/
 │   ├── build.gradle
 │   └── src/main/java/org/firstinspires/ftc/teamcode/
 │       ├── RobotParent.java          Base OpMode: owns and forwards to all subsystems
-│       ├── Autonomous.java           "Auto": schedules DriveToHive on start
-│       ├── TeleOp.java               Empty, not registered yet
+│       ├── Autonomous.java           "auto": schedules DriveToHive on start
+│       ├── TeleOp.java               "teleOp": registered, but runs no subsystems yet
 │       ├── DriveToHive.java          Ivy Command: drive a line to (24, 24, 90°)
 │       ├── ShooterTest.java          Standalone LinearOpMode for shooter/intake prototyping
 │       ├── PedroConstants.java       Pedro drivetrain, localizer, and controller tuning
@@ -23,7 +23,7 @@ FtcRobotControllerV12/
 │           ├── DriveTrain.java         Wraps the Pedro Follower and PoseFactory; runs Ivy Scheduler
 │           ├── Intake.java             Intake motor
 │           ├── Shoot.java              Shooter motor
-│           ├── Vision.java             AprilTag camera (stub)
+│           ├── Vision.java             AprilTag VisionPortal on "tag cam" (ball cam planned)
 │           └── Config.java             Persistent settings (alliance) + gamepad menu
 ├── build.common.gradle      Shared Android config (compileSdk 30, minSdk 24, Java 8)
 ├── build.dependencies.gradle  FTC SDK 12.0.0 + Pedro Pathing + Ivy
@@ -49,7 +49,8 @@ Driver Station selects OpMode
         ▼
 Autonomous / TeleOp  ──extends──►  RobotParent (OpMode)
                                      │  init(): each subsystem.init(this)
-                                     │  loop(): each subsystem.loop()
+                                     │  init(): …then Scheduler.reset()
+                                     │  loop(): each subsystem.loop(), then Scheduler.execute()
                                      ▼
         ┌────────────┬──────────┬──────────┬──────────┬──────────┐
         DriveTrain    Config     Intake     Shoot      Vision
@@ -59,7 +60,7 @@ Autonomous / TeleOp  ──extends──►  RobotParent (OpMode)
         │     ├─ Mecanum            (lf/rf/lb/rb_drive)
         │     └─ Foresight          (tuned controllers)
         ├─ PoseFactory.degrees()   inches + degrees, alliance mirroring
-        └─ loop(): follower.update(); Scheduler.execute()
+        └─ loop(): follower.update(); Scheduler.execute()  ← duplicate, see issues
                                    │
                                    ▼
                          Ivy Commands (e.g. DriveToHive)
@@ -68,7 +69,7 @@ Autonomous / TeleOp  ──extends──►  RobotParent (OpMode)
 
 **Subsystem pattern.** Each piece of hardware is a `HardwareSubsystem` subclass. `RobotParent` creates one of each as a public field, so OpModes and Commands reach hardware as `robot.drive`, `robot.shoot`, and so on. Subsystems receive the `RobotParent` in `init()` and use `robot.hardwareMap` to look up devices.
 
-**Command pattern.** Autonomous behavior is written as Ivy `Command`s. Each command declares the subsystems it needs (`requirements()`), its priority, and how it behaves on conflict, interruption, or blocking. The scheduler is reset in `DriveTrain.init()` and ticked from `DriveTrain.loop()`, after the follower updates. As a result, commands only run while `RobotParent.loop()` is called.
+**Command pattern.** Autonomous behavior is written as Ivy `Command`s. Each command declares the subsystems it needs (`requirements()`), its priority, and how it behaves on conflict, interruption, or blocking. The scheduler is reset at the end of `RobotParent.init()` and ticked at the end of `RobotParent.loop()`. `DriveTrain` still has its own `Scheduler.reset()` and `Scheduler.execute()` calls left over from before, so commands currently tick twice per loop (see issues).
 
 **Two concurrency mechanisms.** `HardwareSubsystem` has its own string-based `lock`/`unlock` ownership check, and Ivy has `requirements()`. Nothing calls `lock`/`unlock` yet. The team should pick one, probably Ivy's.
 
@@ -78,14 +79,20 @@ Autonomous / TeleOp  ──extends──►  RobotParent (OpMode)
 
 Ordered roughly by how soon they'll cause trouble on the robot:
 
-1. **`DriveToHive` uses `Set.of(...)`** (Java 9). This compiles but throws `NoSuchMethodError` on the Control Hub (Android 7, API 24), so Auto crashes when the command is scheduled. Use `Collections.singleton(robot.drive)` instead.
-2. **`Intake` uses the static `BlocksOpModeCompanion.hardwareMap`** instead of `robot.hardwareMap`. That field is null outside Blocks, so `init()` will NPE.
-3. **`Vision` calls `hardwareMap.get(VisionPortal.class, "tag cam")`.** `VisionPortal` isn't a hardware device. Get a `WebcamName` and build the portal with `VisionPortal.Builder` plus an `AprilTagProcessor`; see `ConceptAprilTag` in the samples.
-4. **`TeleOp` has no `@TeleOp` annotation**, and its `init()`/`loop()` overrides don't call `super`. It won't appear on the Driver Station, and if it did, no subsystem would run.
-5. **`RobotParent` never calls `end()` on subsystems.** Override `stop()` to forward it, so the shooter and follower stop cleanly.
-6. **`DriveToHive.done()` always returns `false`**, so the command never finishes and holds `drive` forever. It should finish when the follower is no longer busy.
-7. **`Config.save()` builds the JSON but never writes it** (`writer.write(json.toString())` is missing), and `load()` is never called.
-8. **`Intake.setIntakeSpeed`** clips the input to 0–1 and passes it straight to `setVelocity` (ticks/s), so the motor barely moves. `INTAKE_SPEED` is unused; the intended call is probably `setVelocity(speed * INTAKE_SPEED)`.
-9. **Motor name mismatch:** `ShooterTest` uses `"intake"` while `Intake` uses `"intake spinny"`. Only one of them can match the robot configuration.
-10. **Local `GoBildaPinpointDriver.java`** duplicates the SDK's built-in `com.qualcomm.hardware.gobilda.GoBildaPinpointDriver`, which `PedroConstants` uses. If the local copy is annotated as an I²C device, it can show up as a second "Pinpoint" type in the configuration UI. It's probably safe to delete.
-11. Scheduler ownership lives in `DriveTrain`. If another subsystem ever needs to run without the drive, move `Scheduler.reset()` and `Scheduler.execute()` into `RobotParent`.
+1. **Subsystem `end()` is never called.** `RobotParent.end()` is a new method, not an SDK lifecycle method: the SDK calls `stop()`. Rename it to `@Override public void stop()` in `RobotParent`, `Autonomous`, and `TeleOp`, so the follower and shooter actually stop at the end of a match.
+2. **The Ivy scheduler runs twice per loop.** `Scheduler.execute()` and `Scheduler.reset()` are now in `RobotParent`, but the old calls in `DriveTrain.init()` and `DriveTrain.loop()` weren't removed. Every command's `execute()` and `done()` run twice per cycle. Delete the two `DriveTrain` calls.
+3. **`TeleOp` doesn't call `super.init()` or `super.loop()`.** It shows up on the Driver Station now, but no hardware is initialized and nothing runs.
+4. **`Config.save()` builds the JSON but never writes it** (`writer.write(json.toString())` is missing), and `load()` is never called. Alliance selection won't persist.
+5. **`Vision` never closes its portal.** Add `tagPortal.close()` in `Vision.end()`, once fix 1 means `end()` actually runs. A camera left open can fail to start in the next OpMode.
+6. **`Intake.setIntakeSpeed` clips the input to 0–1**, so the intake can't run in reverse to clear a jam. Use `Range.clip(speed, -1, 1)` if reverse is wanted.
+7. **Local `GoBildaPinpointDriver.java`** duplicates the SDK's built-in `com.qualcomm.hardware.gobilda.GoBildaPinpointDriver`, which `PedroConstants` uses. It's probably safe to delete.
+8. **Unused lock system:** nothing calls `HardwareSubsystem.lock()`/`unlock()`. Ivy's `requirements()` already does this job, so the lock methods can go.
+9. Minor: `Autonomous.java` has an unused `Command` import.
+
+### Fixed in `d63ec5a`
+- `DriveToHive` uses `Collections.singleton` instead of `Set.of`.
+- `DriveToHive.done()` finishes when the follower isn't busy.
+- `Intake` uses `robot.hardwareMap` and scales by `INTAKE_SPEED`.
+- `Vision` builds a real `VisionPortal` with an `AprilTagProcessor`.
+- `TeleOp` is annotated.
+- `ShooterTest` and `Intake` both use `"intake spinny"`.
