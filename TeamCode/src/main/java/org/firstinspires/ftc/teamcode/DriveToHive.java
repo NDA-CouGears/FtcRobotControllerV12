@@ -48,10 +48,10 @@ public class DriveToHive implements Command {
 
     @Override
     public void start() {
-        robot.drive.setPos(new Pose(0,0,0));
+        robot.drive.setPos(DriveTrain.createPose(141.5, 141.5, 270));
 
         Pose start = robot.drive.getCurrentPos();
-        Pose end   = robot.drive.createPose(24, 24, 90);
+        Pose end   = DriveTrain.createPose(141.5-57, 141.5-24, 270);
         Path path  = Paths.line(start, end).linear(start, end);
         
         robot.drive.driveToPath(path);

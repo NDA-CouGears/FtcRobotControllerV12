@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.RobotParent;
 
 public class DriveTrain extends HardwareSubsystem {
     private Follower follower;
-    private PoseFactory factory;
+    private static PoseFactory factory;
 
     @Override
     public void init(RobotParent robotParent) {
@@ -39,14 +39,16 @@ public class DriveTrain extends HardwareSubsystem {
         return follower.pose();
     }
 
-    public void mirror(double axis) {
+    public void mirror() {
+        double axis = 70.75;
         factory.mirrorY(axis);
+        factory.mirrorX(axis);
     }
 
     /**
      heading should be in degrees
      */
-    public Pose createPose(double x, double y, double heading) {
+    public static Pose createPose(double x, double y, double heading) {
         return factory.of(x,y,heading);
     }
 
