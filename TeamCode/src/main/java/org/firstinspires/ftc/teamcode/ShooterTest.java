@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 //import org.firstinspires.ftc.teamcode.legacy.RobotParent;
@@ -12,6 +13,8 @@ import com.qualcomm.robotcore.util.Range;
 public class ShooterTest extends LinearOpMode {
     DcMotorEx shoot;
     DcMotorEx intake;
+    Servo kicker;
+
     float speed;
 
     @Override
@@ -24,6 +27,9 @@ public class ShooterTest extends LinearOpMode {
         intake = hardwareMap.get(DcMotorEx.class, "intake spinny");
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        kicker = hardwareMap.get(Servo.class, "kicker");
+        double kickerPos = 0;
 
         while (opModeIsActive()){
             // target RPM * ticks per revolution / 60 (ticks per minute / 60 = ticks per second)
@@ -62,6 +68,21 @@ public class ShooterTest extends LinearOpMode {
                 intake.setVelocity(0);
 
             telemetry.addLine(String.valueOf(intake.getPower()));
+
+            if (gamepad1.dpadDownWasPressed()) {
+                kickerPos -= 0.01;
+            }
+            else if (gamepad1.dpadUpWasPressed()) {
+                kickerPos += 0.01;
+            }
+            else if (gamepad1.leftTriggerWasPressed()) {
+                kickerPos = 0.5;
+            }
+            else if (gamepad1.leftTriggerWasReleased()) {
+                kickerPos = 0;
+            }
+            kicker.setPosition(kickerPos);
+            telemetry.addLine("Kicker Position:" + kickerPos);
 
             telemetry.update();
         }
