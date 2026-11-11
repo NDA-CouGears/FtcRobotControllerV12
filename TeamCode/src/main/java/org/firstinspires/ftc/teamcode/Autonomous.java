@@ -22,13 +22,12 @@ public class Autonomous extends RobotParent{
         drive.setPos(DriveTrain.createPose(8.5,8.5,90));
         Scheduler.schedule(
                 sequential(
-                        DriveTo.line(this,8.5,8.5,90,55,8.5,90),
-                        DriveTo.curve(this,55,8.5,90,70.75,70.75,180,55,141.5-8.5,270)
-
+                        drive.line(8.5,8.5,90,55,8.5,90),
+                        drive.curve(55,8.5,90,70.75,70.75,180,55,141.5-8.5,270)
                 )
             );
         // command that parks
-        // shoot,
+        // shoot
     }
 
     @Override

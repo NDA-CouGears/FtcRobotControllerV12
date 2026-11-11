@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.hardwaresubsystems;
 
+import com.pedropathing.api.Paths;
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.paths.Path;
 
+import org.firstinspires.ftc.teamcode.DriveTo;
 import org.firstinspires.ftc.teamcode.PedroConstants;
 
 import org.firstinspires.ftc.teamcode.RobotParent;
@@ -20,6 +22,16 @@ public class DriveTrain extends HardwareSubsystem {
 
         follower = PedroConstants.create(robot.hardwareMap);
         factory = PoseFactory.degrees();
+    }
+
+    public DriveTo line(double x1, double y1, double heading1, double x2, double y2, double heading2) {
+        return DriveTo.line(robot,x1,y1,heading1,x2,y2,heading2);
+    }
+
+    public DriveTo curve(double x1, double y1, double heading1,
+                                double xC, double yC, double headingC,
+                                double x2, double y2, double heading2) {
+        return DriveTo.curve(robot,x1,y1,heading1,xC,yC,headingC,x2,y2,heading2);
     }
 
     public void setPos(Pose pose) {
