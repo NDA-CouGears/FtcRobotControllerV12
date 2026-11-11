@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.hardwaresubsystems;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.robot.Robot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.RobotParent;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -13,6 +15,12 @@ import java.io.FileWriter;
 public class Config extends HardwareSubsystem {
     private static final File CONFIG_FILE = AppUtil.getInstance().getSettingsFile("robot_config.json");
     public boolean blueAlliance = true;
+
+    @Override
+    public void init(RobotParent robotParent) {
+        super.init(robotParent);
+        load();
+    }
 
     public void save() {
         try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
@@ -31,6 +39,8 @@ public class Config extends HardwareSubsystem {
         }
 
         try (FileReader reader = new FileReader(CONFIG_FILE)) {
+            if (CONFIG_FILE.length() == 0) return;
+
             char[] buffer = new char[(int) CONFIG_FILE.length()];
             reader.read(buffer);
             JSONObject json = new JSONObject(new String(buffer));
@@ -104,11 +114,11 @@ public class Config extends HardwareSubsystem {
 
     @Override
     public void loop() {
-
+        displayMenu(robot.telemetry, robot.gamepad1);
     }
 
     @Override
     public void end() {
-
+        save();
     }
 }

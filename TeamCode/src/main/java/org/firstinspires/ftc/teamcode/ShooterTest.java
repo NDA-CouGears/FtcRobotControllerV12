@@ -14,6 +14,7 @@ public class ShooterTest extends LinearOpMode {
     DcMotorEx shoot;
     DcMotorEx intake;
     Servo kicker;
+    Servo elevator;
 
     float speed;
 
@@ -30,6 +31,9 @@ public class ShooterTest extends LinearOpMode {
 
         kicker = hardwareMap.get(Servo.class, "kicker");
         double kickerPos = 0;
+
+        elevator = hardwareMap.get(Servo.class, "elevator");
+        double elePos = 0;
 
         while (opModeIsActive()){
             // target RPM * ticks per revolution / 60 (ticks per minute / 60 = ticks per second)
@@ -83,6 +87,17 @@ public class ShooterTest extends LinearOpMode {
             }
             kicker.setPosition(kickerPos);
             telemetry.addLine("Kicker Position:" + kickerPos);
+
+            /*
+            if (gamepad1.dpadDownWasPressed()) {
+                elePos -= 0.05;
+            }
+            else if (gamepad1.dpadUpWasPressed()) {
+                elePos += 0.05;
+            }
+            elevator.setPosition(elePos);
+            telemetry.addLine("Elevator Pos: "+elePos);
+             */
 
             telemetry.update();
         }

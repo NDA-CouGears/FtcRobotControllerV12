@@ -53,8 +53,7 @@ public class DriveTrain extends HardwareSubsystem {
 
     public void mirror() {
         double axis = 70.75;
-        factory.mirrorY(axis);
-        factory.mirrorX(axis);
+        factory = factory.mirrorY(axis).mirrorY(axis);
     }
 
     /**
