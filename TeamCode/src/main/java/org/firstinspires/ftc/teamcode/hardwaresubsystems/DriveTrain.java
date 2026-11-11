@@ -52,6 +52,10 @@ public class DriveTrain extends HardwareSubsystem {
         return factory.of(x,y,heading);
     }
 
+    public void manual(double forward, double lateral, double turn) {
+        follower.manual(forward, lateral, turn);
+    }
+
     @Override
     public void loop() {
         follower.update();

@@ -11,6 +11,12 @@ public class TeleOp extends RobotParent{
     @Override
     public void loop() {
         super.loop();
+
+        double forward = -gamepad1.left_stick_y;
+        double lateral = gamepad1.left_stick_x;
+        double turn = gamepad1.right_stick_x;
+
+        drive.manual(forward, lateral, turn);
     }
 
     @Override
