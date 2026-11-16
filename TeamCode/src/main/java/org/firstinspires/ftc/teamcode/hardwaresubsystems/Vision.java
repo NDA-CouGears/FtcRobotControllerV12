@@ -4,6 +4,7 @@ import android.icu.text.Transliterator;
 import android.util.Size;
 
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -27,6 +28,7 @@ public class Vision extends HardwareSubsystem{
     private AprilTagProcessor tagProcessor;
     private VisionPortal tagPortal;
     private Servo elevator;
+    private ElapsedTime initTime;
 
     @Override
     public void init(RobotParent robotParent) {
@@ -49,10 +51,12 @@ public class Vision extends HardwareSubsystem{
                 .build();
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(robot.hardwareMap.get(WebcamName.class, "tag cam"));
-        builder.setCameraResolution(new Size(320, 240));
+        builder.setCameraResolution(new Size(640, 480));
         builder.enableLiveView(false);
         builder.addProcessor(tagProcessor);
         tagPortal = builder.build();
+
+        optimizeExposureForAprilTags(tagPortal);
 
         elevator = robot.hardwareMap.get(Servo.class, "elevator");
         elevator.setPosition(.75); // we found that this angle works to see the tags
@@ -96,10 +100,13 @@ public class Vision extends HardwareSubsystem{
         GainControl gainControl = portal.getCameraControl(GainControl.class);
 
         // 3. Change Mode to Manual (Required before you can override values)
-        if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+        if (exposureControl.getMode() != ExposureControl.Mode.Manual && initTime == null) {
             exposureControl.setMode(ExposureControl.Mode.Manual);
             // sleep(50);
+            initTime = new ElapsedTime();
         }
+
+        if (initTime != null && initTime.milliseconds() <= 50) return;
 
         // 4. Set standard low-shutter, high-gain parameters to kill motion blur
         // Target exposure: 4 to 8 milliseconds (very fast)

@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.hardwaresubsystems;
 
-import com.pedropathing.api.Paths;
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
-import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.paths.Path;
 
-import org.firstinspires.ftc.teamcode.DriveTo;
+import org.firstinspires.ftc.teamcode.commands.DriveTo;
 import org.firstinspires.ftc.teamcode.PedroConstants;
 
 import org.firstinspires.ftc.teamcode.RobotParent;
