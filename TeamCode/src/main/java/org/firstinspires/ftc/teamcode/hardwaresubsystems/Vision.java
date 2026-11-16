@@ -29,6 +29,7 @@ public class Vision extends HardwareSubsystem{
     private VisionPortal tagPortal;
     private Servo elevator;
     private ElapsedTime initTime;
+    private boolean exposureOptimized = false;
 
     @Override
     public void init(RobotParent robotParent) {
@@ -56,14 +57,22 @@ public class Vision extends HardwareSubsystem{
         builder.addProcessor(tagProcessor);
         tagPortal = builder.build();
 
-        optimizeExposureForAprilTags(tagPortal);
-
         elevator = robot.hardwareMap.get(Servo.class, "elevator");
         elevator.setPosition(.75); // we found that this angle works to see the tags
     }
 
     @Override
+    public void init_loop() {
+        if (!exposureOptimized) optimizeExposureForAprilTags(tagPortal);
+        displayTelemetry();
+    }
+
+    @Override
     public void loop() {
+        displayTelemetry();
+    }
+
+    public void displayTelemetry() {
         ArrayList<AprilTagDetection> detections = tagProcessor.getDetections();
         robot.telemetry.addLine("detected tags:");
         for (AprilTagDetection detection : detections) {
@@ -126,6 +135,8 @@ public class Vision extends HardwareSubsystem{
         // 5. Commit the settings to hardware
         exposureControl.setExposure(finalExposure, TimeUnit.MILLISECONDS);
         gainControl.setGain(finalGain);
+
+        exposureOptimized = true;
 
         robot.telemetry.addData("Camera", "Manual Control Locked!");
         robot.telemetry.addData("Exposure set to", finalExposure + "ms");

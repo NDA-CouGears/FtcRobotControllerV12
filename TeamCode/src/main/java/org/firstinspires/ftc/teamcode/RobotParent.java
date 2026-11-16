@@ -29,8 +29,11 @@ public abstract class RobotParent extends OpMode {
     @Override
     public void init_loop() {
         super.init_loop();
-        config.loop();
-        vision.loop();
+        drive.init_loop();
+        config.init_loop();
+        intake.init_loop();
+        shoot.init_loop();
+        vision.init_loop();
     }
 
     @Override
