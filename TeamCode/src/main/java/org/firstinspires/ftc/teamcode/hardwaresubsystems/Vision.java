@@ -45,7 +45,7 @@ public class Vision extends HardwareSubsystem{
         Position cameraPosition = new Position(DistanceUnit.INCH,
                 0, 0, 13, 0);
         YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
-                0, 45, 0, 0);
+                0, -45, 0, 0);
 
         tagProcessor = new AprilTagProcessor.Builder()
                 .setCameraPose(cameraPosition,cameraOrientation)

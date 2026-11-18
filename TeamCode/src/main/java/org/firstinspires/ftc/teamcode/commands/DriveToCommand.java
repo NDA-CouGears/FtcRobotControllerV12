@@ -15,11 +15,11 @@ import org.firstinspires.ftc.teamcode.hardwaresubsystems.DriveTrain;
 import java.util.Collections;
 import java.util.Set;
 
-public class DriveTo implements Command {
+public class DriveToCommand implements Command {
     private final RobotParent robot;
     private Path path;
 
-    private DriveTo(RobotParent robot, Path path) {
+    private DriveToCommand(RobotParent robot, Path path) {
         this.robot = robot;
         this.path = path;
     }
@@ -27,21 +27,21 @@ public class DriveTo implements Command {
     /**
      * @param heading1 should be in degrees
      */
-    public static DriveTo line(RobotParent robot, double x1, double y1, double heading1, double x2, double y2, double heading2) {
+    public static DriveToCommand line(RobotParent robot, double x1, double y1, double heading1, double x2, double y2, double heading2) {
         Pose start = DriveTrain.createPose(x1, y1, heading1);
         Pose end = DriveTrain.createPose(x2, y2, heading2);
         Path path  = Paths.line(start, end).linear(start, end);
-        return new DriveTo(robot, path);
+        return new DriveToCommand(robot, path);
     }
 
-    public static DriveTo curve(RobotParent robot, double x1, double y1, double heading1,
-                                double xC, double yC, double headingC,
-                                double x2, double y2, double heading2) {
+    public static DriveToCommand curve(RobotParent robot, double x1, double y1, double heading1,
+                                       double xC, double yC, double headingC,
+                                       double x2, double y2, double heading2) {
         Pose start = DriveTrain.createPose(x1, y1, heading1);
         Pose control = DriveTrain.createPose(xC, yC, headingC);
         Pose end = DriveTrain.createPose(x2, y2, heading2);
         Path path  = Paths.curve(start, control, end).linear(start, end);
-        return new DriveTo(robot, path);
+        return new DriveToCommand(robot, path);
     }
 
     @Override
