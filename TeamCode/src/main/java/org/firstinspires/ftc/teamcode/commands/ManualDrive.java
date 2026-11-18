@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.commands;
 
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.behaviors.BlockedBehavior;
@@ -6,6 +6,8 @@ import com.pedropathing.ivy.behaviors.ConflictBehavior;
 import com.pedropathing.ivy.behaviors.EndCondition;
 import com.pedropathing.ivy.behaviors.InterruptedBehavior;
 import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.firstinspires.ftc.teamcode.RobotParent;
 
 import java.util.Collections;
 import java.util.Set;
@@ -25,7 +27,7 @@ import java.util.Set;
  * it to cancel a driver assist so the driver can take over at any time.
  */
 public class ManualDrive implements Command {
-    /** Stick values smaller than this count as "not touching the stick". */
+    // Stick values smaller than this count as "not touching the stick".
     public static final double OVERRIDE_DEADBAND = 0.2;
 
     private final RobotParent robot;
@@ -36,7 +38,7 @@ public class ManualDrive implements Command {
         this.gamepad = gamepad;
     }
 
-    /** True when the driver is moving any drive stick past the deadband. */
+    // True when the driver is moving any drive stick past the deadband.
     public boolean driverIsDriving() {
         return Math.abs(gamepad.left_stick_y) > OVERRIDE_DEADBAND
                 || Math.abs(gamepad.left_stick_x) > OVERRIDE_DEADBAND
