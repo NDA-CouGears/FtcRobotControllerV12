@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.RobotParent;
 import java.util.Collections;
 import java.util.Set;
 
-public class ShootCommand implements Command {
+public class Launch implements Command {
     private final RobotParent robot;
     private int remainingShots;
     private ElapsedTime timer;
@@ -20,7 +20,7 @@ public class ShootCommand implements Command {
     private static final int KICK = 0;
     private static final int WAIT_UP = 1;
     private static final int WAIT_DOWN = 2;
-    public ShootCommand(RobotParent robot, int shots) {
+    public Launch(RobotParent robot, int shots) {
         this.robot = robot;
         this.remainingShots = shots;
         timer = new ElapsedTime();

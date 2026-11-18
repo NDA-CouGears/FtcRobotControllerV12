@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.RobotParent;
+import org.firstinspires.ftc.teamcode.commands.SetShootSpeed;
 
 public class Shoot extends HardwareSubsystem {
     private DcMotorEx shooter;
@@ -18,12 +19,16 @@ public class Shoot extends HardwareSubsystem {
     public void init(RobotParent robotParent) {
         super.init(robotParent);
         shooter = robot.hardwareMap.get(DcMotorEx.class, "shoot");
-        kicker = robotParent.hardwareMap.get(Servo.class, "launch");
+        kicker = robotParent.hardwareMap.get(Servo.class, "kicker");
         kicker.setPosition(0);
     }
 
     public boolean isBusy() {
         return shooter.isBusy();
+    }
+
+    public SetShootSpeed setShootSpeed(double multiplier) {
+        return SetShootSpeed.setShootSpeed(robot,multiplier);
     }
 
     public void setShooter(double multiplier) {

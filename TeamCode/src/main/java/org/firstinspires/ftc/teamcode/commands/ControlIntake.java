@@ -5,20 +5,30 @@ import com.pedropathing.ivy.behaviors.BlockedBehavior;
 import com.pedropathing.ivy.behaviors.ConflictBehavior;
 import com.pedropathing.ivy.behaviors.EndCondition;
 import com.pedropathing.ivy.behaviors.InterruptedBehavior;
-import com.qualcomm.robotcore.hardware.configuration.ExpansionHubMotorControllerPositionParams;
 
 import org.firstinspires.ftc.teamcode.RobotParent;
 
 import java.util.Collections;
 import java.util.Set;
 
-public class SetShootSpeedCommand implements Command {
+public class ControlIntake implements Command {
 
-    public RobotParent robot;
-    public double multiplier;
-    public SetShootSpeedCommand(RobotParent robot, double multiplier) {
+    private RobotParent robot;
+    private double speed;
+
+    private ControlIntake(RobotParent robot, double speed) {
         this.robot = robot;
-        this.multiplier = multiplier;
+        this.speed = speed;
+    }
+
+    public static ControlIntake intakeOn(RobotParent robot, double speed, boolean forward) {
+        if (forward) speed = Math.abs(speed);
+        else speed = -Math.abs(speed);
+        return new ControlIntake(robot,speed);
+    }
+
+    public static ControlIntake intakeOff(RobotParent robot) {
+        return new ControlIntake(robot,0);
     }
 
     @Override
@@ -48,12 +58,12 @@ public class SetShootSpeedCommand implements Command {
 
     @Override
     public void start() {
-        robot.shoot.setShooter(multiplier);
+        robot.intake.setIntakeSpeed(speed);
     }
 
     @Override
     public boolean done() {
-        return false;
+        return true;
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
 
-import org.firstinspires.ftc.teamcode.commands.DriveToCommand;
+import org.firstinspires.ftc.teamcode.commands.DriveTo;
 import org.firstinspires.ftc.teamcode.PedroConstants;
 
 import org.firstinspires.ftc.teamcode.RobotParent;
@@ -22,14 +22,14 @@ public class DriveTrain extends HardwareSubsystem {
         factory = PoseFactory.degrees();
     }
 
-    public DriveToCommand line(double x1, double y1, double heading1, double x2, double y2, double heading2) {
-        return DriveToCommand.line(robot,x1,y1,heading1,x2,y2,heading2);
+    public DriveTo line(double x1, double y1, double heading1, double x2, double y2, double heading2) {
+        return DriveTo.line(robot,x1,y1,heading1,x2,y2,heading2);
     }
 
-    public DriveToCommand curve(double x1, double y1, double heading1,
-                                double xC, double yC, double headingC,
-                                double x2, double y2, double heading2) {
-        return DriveToCommand.curve(robot,x1,y1,heading1,xC,yC,headingC,x2,y2,heading2);
+    public DriveTo curve(double x1, double y1, double heading1,
+                         double xC, double yC, double headingC,
+                         double x2, double y2, double heading2) {
+        return DriveTo.curve(robot,x1,y1,heading1,xC,yC,headingC,x2,y2,heading2);
     }
 
     public void setPos(Pose pose) {
