@@ -78,8 +78,8 @@ public class ManualDrive implements Command {
     @Override
     public void execute() {
         double forward = -gamepad.left_stick_y;
-        double lateral = gamepad.left_stick_x;
-        double turn = gamepad.right_stick_x;
+        double lateral = -gamepad.left_stick_x;
+        double turn = -gamepad.right_stick_x;
 
         robot.drive.manual(forward, lateral, turn);
     }
