@@ -113,8 +113,13 @@ public class Config extends HardwareSubsystem {
     }
 
     @Override
-    public void loop() {
+    public void init_loop() {
         displayMenu(robot.telemetry, robot.gamepad1);
+    }
+
+    @Override
+    public void loop() {
+
     }
 
     @Override

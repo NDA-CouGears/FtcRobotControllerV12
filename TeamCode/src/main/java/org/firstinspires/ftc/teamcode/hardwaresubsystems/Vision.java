@@ -4,6 +4,7 @@ import android.icu.text.Transliterator;
 import android.util.Size;
 
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -27,6 +28,8 @@ public class Vision extends HardwareSubsystem{
     private AprilTagProcessor tagProcessor;
     private VisionPortal tagPortal;
     private Servo elevator;
+    private ElapsedTime initTime;
+    private boolean exposureOptimized = false;
 
     @Override
     public void init(RobotParent robotParent) {
@@ -42,14 +45,14 @@ public class Vision extends HardwareSubsystem{
         Position cameraPosition = new Position(DistanceUnit.INCH,
                 0, 0, 13, 0);
         YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
-                0, 45, 0, 0);
+                0, -45, 0, 0);
 
         tagProcessor = new AprilTagProcessor.Builder()
                 .setCameraPose(cameraPosition,cameraOrientation)
                 .build();
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(robot.hardwareMap.get(WebcamName.class, "tag cam"));
-        builder.setCameraResolution(new Size(320, 240));
+        builder.setCameraResolution(new Size(640, 480));
         builder.enableLiveView(false);
         builder.addProcessor(tagProcessor);
         tagPortal = builder.build();
@@ -59,7 +62,17 @@ public class Vision extends HardwareSubsystem{
     }
 
     @Override
+    public void init_loop() {
+        if (!exposureOptimized) optimizeExposureForAprilTags(tagPortal);
+        displayTelemetry();
+    }
+
+    @Override
     public void loop() {
+        displayTelemetry();
+    }
+
+    public void displayTelemetry() {
         ArrayList<AprilTagDetection> detections = tagProcessor.getDetections();
         robot.telemetry.addLine("detected tags:");
         for (AprilTagDetection detection : detections) {
@@ -96,10 +109,13 @@ public class Vision extends HardwareSubsystem{
         GainControl gainControl = portal.getCameraControl(GainControl.class);
 
         // 3. Change Mode to Manual (Required before you can override values)
-        if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+        if (exposureControl.getMode() != ExposureControl.Mode.Manual && initTime == null) {
             exposureControl.setMode(ExposureControl.Mode.Manual);
             // sleep(50);
+            initTime = new ElapsedTime();
         }
+
+        if (initTime != null && initTime.milliseconds() <= 50) return;
 
         // 4. Set standard low-shutter, high-gain parameters to kill motion blur
         // Target exposure: 4 to 8 milliseconds (very fast)
@@ -119,6 +135,8 @@ public class Vision extends HardwareSubsystem{
         // 5. Commit the settings to hardware
         exposureControl.setExposure(finalExposure, TimeUnit.MILLISECONDS);
         gainControl.setGain(finalGain);
+
+        exposureOptimized = true;
 
         robot.telemetry.addData("Camera", "Manual Control Locked!");
         robot.telemetry.addData("Exposure set to", finalExposure + "ms");

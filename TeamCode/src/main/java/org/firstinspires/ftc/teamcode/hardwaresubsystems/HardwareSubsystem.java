@@ -10,6 +10,8 @@ public abstract class HardwareSubsystem {
         robot = robotParent;
     }
 
+    public void init_loop() {}
+
     public abstract void loop();
 
     public abstract void end();

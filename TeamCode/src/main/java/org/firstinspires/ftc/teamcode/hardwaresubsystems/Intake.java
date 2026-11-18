@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.RobotParent;
+import org.firstinspires.ftc.teamcode.commands.ControlIntake;
 import org.firstinspires.ftc.teamcode.hardwaresubsystems.HardwareSubsystem;
 
 public class Intake extends HardwareSubsystem {
@@ -23,6 +24,14 @@ public class Intake extends HardwareSubsystem {
     public void setIntakeSpeed(double speed) {
         speed = Range.clip(speed,-1,1);
         intakeSpinny.setVelocity(speed * INTAKE_SPEED);
+    }
+
+    public ControlIntake intakeOn(double speed, boolean forward) {
+        return ControlIntake.intakeOn(robot,speed,forward);
+    }
+
+    public ControlIntake intakeOff() {
+        return ControlIntake.intakeOff(robot);
     }
 
     public double getIntakeSpeed() {
