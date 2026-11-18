@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 
+import org.firstinspires.ftc.teamcode.commands.ManualDrive;
+
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "teleOp")
 public class TeleOp extends RobotParent{
 
