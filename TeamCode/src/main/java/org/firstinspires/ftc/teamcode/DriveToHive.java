@@ -69,5 +69,10 @@ public class DriveToHive implements Command {
 
     @Override
     public void end(EndCondition endCondition) {
+        // If we were cut short (driver took over, or another command interrupted us)
+        // the path may still be running, so stop it.
+        if (robot.drive.isBusy()) {
+            robot.drive.stop();
+        }
     }
 }

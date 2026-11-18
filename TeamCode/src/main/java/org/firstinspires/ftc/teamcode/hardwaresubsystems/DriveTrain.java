@@ -67,6 +67,11 @@ public class DriveTrain extends HardwareSubsystem {
         follower.manual(forward, lateral, turn);
     }
 
+    /** Stop following any path and stop the drive motors. */
+    public void stop() {
+        follower.stop();
+    }
+
     @Override
     public void loop() {
         follower.update();
